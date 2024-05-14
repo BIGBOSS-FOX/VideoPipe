@@ -86,7 +86,7 @@ gpu: RTX3090
   $ sudo ldconfig
   ```
   
-- [x] 配置CUDA, CUDNN, TensorRT(不要有`CPATH`? 容易造成找不到<cuda.h>)
+- [x] 配置CUDA, CUDNN, TensorRT(~~不要有`CPATH`? 容易造成找不到<cuda.h>~~)
 
   ```bash
   $ sudo ln -s /home/cdy/TensorRT-8.6.1.6 /usr/local/tensorRT
@@ -99,7 +99,7 @@ gpu: RTX3090
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/tensorRT/lib:/usr/local/lib
   # export PATH=$PATH:/bin:/usr/bin:/usr/local/cuda/bin:/home/cdy/TensorRT-8.6.1.6/bin
   export PATH=$PATH:/bin:/usr/bin:/usr/local/cuda/bin:/usr/local/tensorRT/bin
-  # export CPATH=$CPATH:/usr/local/cuda/include:/usr/local/tensorRT/include
+  export CPATH=$CPATH:/usr/local/cuda/include:/usr/local/tensorRT/include
   export CUDA_PATH=/usr/local/cuda
   export CUDA_HOME=/usr/local/cuda
   export CUDNN_INCLUDE_PATH=/usr/local/cuda/include
@@ -144,7 +144,7 @@ gpu: RTX3060
   
   export PATH=$PATH:/usr/local/cuda/bin:/usr/local/tensorRT/bin
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/tensorRT/lib:/usr/local/cuda/lib64:/usr/local/lib
-  # export CPATH=$CPATH:/usr/local/cuda/include:/usr/local/tensorRT/include
+  export CPATH=$CPATH:/usr/local/cuda/include:/usr/local/tensorRT/include
   # export CUDA_HOME=/usr/local/cuda-11.3
   export CUDA_PATH=/usr/local/cuda
   export CUDA_HOME=/usr/local/cuda
@@ -374,11 +374,54 @@ start build for simple samples...
 
 
 
-## 代码阅读
+## samples阅读
 
-### `CMakeLists.txt`
+### trt_yolov8_sample
 
+#### 1. 首先尝试`./third_party/trt_yolov8/README.md`里的模型转换方式
 
+1. 建`./vp_data/models/cdy/`目录，专门存放自己的weights，将yolov8m相关的`.pt`放入
 
-### `./samples/1-1-1_sample.cpp`
+2. 模型转换`.pt -> .wts -> .engine`:
+
+   2.1 `.pt -> .wts`:
+
+   ```bash
+   # in ./third_party/trt_yolov8/samples/
+   $ python gen_wts.py -w /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m.pt -o /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m.wts -t detect
+   
+   $ python gen_wts.py -w /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-seg.pt -o /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-seg.wts -t seg
+   
+   $ python gen_wts.py -w /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-pose.pt -o /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-pose.wts
+   
+   $ python gen_wts.py -w /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-cls.pt -o /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-cls.wts -t cls
+   ```
+
+   2.2 单独编译`./third_party/trt_yolov8/CMakeLists.txt`:
+
+   ```bash
+   # in ./third_party/trt_yolov8/
+   $ mkdir build && cd build
+   $ cmake ..
+   $ make -j$(nproc)
+   ```
+
+   2.3 `.wts -> .engine`:
+
+   ```bash
+   # in ./third_party/trt_yolov8/build/samples/
+   $ ./trt_yolov8_wts_2_engine -det /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m.wts /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m.engine m
+   
+   $ ./trt_yolov8_wts_2_engine -seg /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-seg.wts /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-seg.engine m
+   
+   $ ./trt_yolov8_wts_2_engine -pose /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-pose.wts /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-pose.engine m
+   [05/14/2024-20:33:17] [E] [TRT] 3: (Unnamed Layer* 343) [Convolution]:kernel weights has count 192 but 15360 was expected
+   [05/14/2024-20:33:17] [E] [TRT] 4: (Unnamed Layer* 343) [Convolution]: count of 192 weights in kernel, but kernel dimensions (1,1) with 192 input channels, 80 output channels and 1 groups were specified. Expected Weights count is 192 * 1*1 * 80 / 1 = 15360
+   [05/14/2024-20:33:17] [E] [TRT] 4: [convolutionNode.cpp::computeOutputExtents::43] Error Code 4: Internal Error ((Unnamed Layer* 343) [Convolution]: number of kernel weights does not match tensor dimensions)
+   浮点数例外 (核心已转储)
+   
+   $ ./trt_yolov8_wts_2_engine -cls /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-cls.wts /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-cls.engine m
+   ```
+
+   
 
