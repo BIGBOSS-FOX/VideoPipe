@@ -156,3 +156,7 @@ cmake-build-debug-remote/
 cmake-build-debug/
 build/*
 !build/build.sh
+
+# own
+vp_analysis_board.png
+**/vp_data/
