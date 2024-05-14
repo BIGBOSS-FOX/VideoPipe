@@ -378,7 +378,7 @@ start build for simple samples...
 
 ### trt_yolov8_sample
 
-#### 1. 首先尝试`./third_party/trt_yolov8/README.md`里的模型转换方式
+#### 首先尝试`./third_party/trt_yolov8/README.md`里的模型转换方式
 
 1. 建`./vp_data/models/cdy/`目录，专门存放自己的weights，将yolov8m相关的`.pt`放入
 
@@ -423,5 +423,30 @@ start build for simple samples...
    $ ./trt_yolov8_wts_2_engine -cls /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-cls.wts /home/cdy/Data_HDD/Projects/VideoPipe/vp_data/models/cdy/yolov8m-cls.engine m
    ```
 
+
+#### 因为pose的engine无法顺利导出，先运行det和seg的sample
+
+1. 将`./samples/trt_yolov8_sample.cpp`改写成`./samples/cdy_trt_yolov8_det_sample.cpp`和`./samples/cdy_trt_yolov8_seg_sample.cpp`
+
+2. `./samples/CMakeLists.txt`中添加相应内容
+
+3. 编译：
+
+   ```bash
+   # in ./build/
+   $ make
+   ```
+
+4. 运行：
+
+   ```bash
+   # in ./
+   $ ./build/bin/cdy_trt_yolov8_det_sample
    
+   $ ./build/bin/cdy_trt_yolov8_seg_sample
+   ```
+
+   
+
+
 

@@ -170,6 +170,12 @@ if(VP_WITH_TRT)
 
     add_executable(trt_yolov8_sample2 "trt_yolov8_sample2.cpp")
     target_link_libraries(trt_yolov8_sample2 ${PROJECT_NAME})
+
+    add_executable(cdy_trt_yolov8_det_sample "cdy_trt_yolov8_det_sample.cpp")
+    target_link_libraries(cdy_trt_yolov8_det_sample ${PROJECT_NAME})
+
+    add_executable(cdy_trt_yolov8_seg_sample "cdy_trt_yolov8_seg_sample.cpp")
+    target_link_libraries(cdy_trt_yolov8_seg_sample ${PROJECT_NAME})
 endif()
 
 if(VP_BUILD_COMPLEX_SAMPLES)
