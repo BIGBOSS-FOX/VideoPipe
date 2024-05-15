@@ -1,5 +1,6 @@
 
-#include "trt_yolov8_seg_detector.h"
+// #include "trt_yolov8_seg_detector.h"
+#include "cdy_trt_yolov8_seg_detector.h"
 
 namespace trt_yolov8 {
     using namespace nvinfer1;
@@ -96,10 +97,8 @@ namespace trt_yolov8 {
         // Note that indices are guaranteed to be less than IEngine::getNbBindings()
         const int inputIndex = engine->getBindingIndex(kInputTensorName);
         const int outputIndex = engine->getBindingIndex(kOutputTensorName);
-        // Original
-        const int outputIndex_seg = engine->getBindingIndex("proto");
-        // // Modified for ultralytics
-        // const int outputIndex_seg = engine->getBindingIndex("output1");
+        // const int outputIndex_seg = engine->getBindingIndex("proto");
+        const int outputIndex_seg = engine->getBindingIndex("output1");
 
         assert(inputIndex == 0);
         assert(outputIndex == 1);

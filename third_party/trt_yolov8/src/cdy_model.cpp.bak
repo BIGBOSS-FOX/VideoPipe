@@ -3,8 +3,10 @@
 
 #include "../include/block.h"
 #include "../include/calibrator.h"
-#include "../include/config.h"
-#include "../include/model.h"
+// #include "../include/config.h"
+// #include "../include/model.h"
+#include "../include/cdy_config.h"
+#include "../include/cdy_model.h"
 
 static int get_width(int x, float gw, int max_channels, int divisor = 8) {
     auto channel = int(ceil((x * gw) / divisor)) * divisor;
@@ -1246,10 +1248,9 @@ nvinfer1::IHostMemory* buildEngineYolov8Seg(nvinfer1::IBuilder* builder, nvinfer
     network->markOutput(*yolo->getOutput(0));
 
     auto proto = Proto(network, weightMap, *conv15->getOutput(0), "model.22.proto", gw, max_channels);
-    // Original
-    proto->getOutput(0)->setName("proto");
-    // // Modified for ultralytics
-    // proto->getOutput(0)->setName("output1");
+    // proto->getOutput(0)->setName("proto");
+    proto->getOutput(0)->setName("output1");
+
     network->markOutput(*proto->getOutput(0));
 
     builder->setMaxBatchSize(kBatchSize);

@@ -1,6 +1,7 @@
 #include "../nodes/vp_file_src_node.h"
 // #include "../nodes/infers/vp_trt_yolov8_detector.h"
-#include "../nodes/infers/vp_trt_yolov8_seg_detector.h"
+// #include "../nodes/infers/vp_trt_yolov8_seg_detector.h"
+#include "../nodes/infers/cdy_vp_trt_yolov8_seg_detector.h"
 // #include "../nodes/infers/vp_trt_yolov8_pose_detector.h"
 #include "../nodes/osd/vp_osd_node_v3.h"
 #include "../nodes/osd/vp_pose_osd_node.h"
@@ -26,18 +27,7 @@ int main() {
     // create nodes for 2nd pipeline
     auto file_src_1 = std::make_shared<vp_nodes::vp_file_src_node>("file_src_1", 1, "./vp_data/test_video/face2.mp4");
     // auto yolo8_seg_detector = std::make_shared<vp_nodes::vp_trt_yolov8_seg_detector>("yolo8_seg_detector", "./vp_data/models/trt/others/yolov8s-seg_v8.5.engine", "./vp_data/models/coco_80classes.txt");
-    // Original
-    auto yolo8_seg_detector = std::make_shared<vp_nodes::vp_trt_yolov8_seg_detector>(
-        "yolo8_seg_detector",
-        "./vp_data/models/cdy/yolov8m-seg_w2e.engine",
-        "./vp_data/models/coco_80classes.txt"
-    );
-    // // Modified for ultralytics
-    // auto yolo8_seg_detector = std::make_shared<vp_nodes::vp_trt_yolov8_seg_detector>(
-    //     "yolo8_seg_detector",
-    //     "./vp_data/models/cdy/yolov8m-seg_trtexec_fp16.engine",
-    //     "./vp_data/models/coco_80classes.txt"
-    // );
+    auto yolo8_seg_detector = std::make_shared<vp_nodes::vp_trt_yolov8_seg_detector>("yolo8_seg_detector", "./vp_data/models/cdy/yolov8m-seg_trtexec_fp16.engine", "./vp_data/models/coco_80classes.txt");
     auto osd_1 = std::make_shared<vp_nodes::vp_osd_node_v3>("osd_1", "./vp_data/font/NotoSansCJKsc-Medium.otf");
     auto screen_des_1 = std::make_shared<vp_nodes::vp_screen_des_node>("screen_des_1", 1);
 
